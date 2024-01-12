@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolånekalkyl med TypeScript</title>
+    <meta name="description" content="En bolånekalkyl med resultat och amorteringsplan skriven i TypeScript">
+    <link rel="stylesheet" href="main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Bolånekalkylator</h1>
+
+    <form id="loanContainer">
+        <input id="loanAmount" type="number" placeholder="Fyll i lånebelopp" required>
+        <input id="interestRate" type="number" placeholder="Fyll i räntesats" required>
+        <input id="repaymentPeriod" type="number" placeholder="Fyll i återbetalningstid (år)" required>
+        <input id="submit" type="submit" value="Beräkna">
+    </form>
+
+    <div id="resultsContainer"></div>
+
+    <script src="./js/index.js"></script>
+
+</body>
+</html>
