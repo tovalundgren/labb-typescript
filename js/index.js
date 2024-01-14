@@ -19,10 +19,10 @@ function isValidInput() {
     if (loanAmount < 10000 || loanAmount > 1000000) {
         return { isValid: false, errorMessage: "Tillåtet lånebelopp är mellan 10000 och 1000000 SEK." };
     }
-    if (interestRate < (2 / 100 / 12) || interestRate > (10 / 100 / 12)) {
+    if (interestRate < (2) || interestRate > (10)) {
         return { isValid: false, errorMessage: "Tillåten räntesats är mellan 2 och 10%." };
     }
-    if (repaymentPeriod < (1 * 12) || repaymentPeriod > (20 * 12)) {
+    if (repaymentPeriod < (1) || repaymentPeriod > (20)) {
         return { isValid: false, errorMessage: "Tillåten återbetalningstid är mellan 1 och 20 år." };
     }
     // Om alla kontroller är godkända, returna true och inget felmeddelande
@@ -34,11 +34,9 @@ loanForm.addEventListener('submit', function (event) {
     event.preventDefault();
     // Hämta användarens inmatade värden
     loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    // Omvandla ränta till månadsränta
-    interestRate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
-    // Omvandla återbetalningstid till månader
-    repaymentPeriod = parseFloat(document.getElementById('repaymentPeriod').value) * 12;
-    // Valider användarens inmatningar
+    interestRate = parseFloat(document.getElementById('interestRate').value);
+    repaymentPeriod = parseFloat(document.getElementById('repaymentPeriod').value);
+    // Validera användarens inmatningar
     const validation = isValidInput();
     if (!validation.isValid) {
         if (validation.errorMessage) {
@@ -51,18 +49,18 @@ loanForm.addEventListener('submit', function (event) {
     }
     // Utför beräkningar med de validerade värdena
     const monthlyPayment = calculateMonthlyPayment(loanAmount, interestRate, repaymentPeriod);
-    const totalInterest = calculateTotalInterest(monthlyPayment, repaymentPeriod, loanAmount);
-    const amortizationSchedule = generateAmortizationSchedule(loanAmount, interestRate, repaymentPeriod, monthlyPayment);
+    const totalInterest = calculateTotalInterest(monthlyPayment, repaymentPeriod * 12, loanAmount);
+    const amortizationSchedule = generateAmortizationSchedule(loanAmount, interestRate / 100 / 12, repaymentPeriod * 12, monthlyPayment);
     // Visa resultaten under beräkna-knappen på webbsidan
     displayResults(monthlyPayment, totalInterest, amortizationSchedule);
 });
 // Funktion för att beräkna den månatliga betalningen med den givna formeln: M = p * (r * (1+r)^n)) / ((1 + r)^n-1))
-function calculateMonthlyPayment(loanAmount, interestRate, repaymentPeriod) {
+function calculateMonthlyPayment(loanAmount, annualInterestRate, repaymentPeriod) {
     // Konvertera den årliga räntesatsen till en månatlig räntesats
-    const monthlyInterestRate = interestRate / 12;
-    const numberOfPayments = repaymentPeriod;
+    const monthlyInterestRate = annualInterestRate / 100 / 12;
+    const numberOfPayments = repaymentPeriod * 12;
     // Beräkna månatlig betalning enligt formeln. Math.pow för att beräkna basen upphöjt till exponenten. Numerator (täljare) och denominator (nämnare).
-    const numerator = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments));
+    const numerator = loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments);
     const denominator = Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1;
     const monthlyPayment = numerator / denominator;
     return monthlyPayment;

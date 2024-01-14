@@ -16,23 +16,23 @@ const loanForm = document.getElementById('loanContainer') as HTMLFormElement;
 function isValidInput(): {isValid: boolean; errorMessage: string} {
     // Kontrollera om någon av de inmatade värdena är negativa, lånebeloppets gränser, räntesatsens gränser och återbetalningstidens gränser. Meddela användare vid ogiltig inmatning
     if (loanAmount <= 0 || interestRate <= 0 || repaymentPeriod <= 0) {
-        return { isValid: false, errorMessage: "Negativa värden är inte tillåtna." };
+        return {isValid: false, errorMessage: "Negativa värden är inte tillåtna."};
     }
 
     if (loanAmount < 10000 || loanAmount > 1000000) {
-        return { isValid: false, errorMessage: "Tillåtet lånebelopp är mellan 10000 och 1000000 SEK." };
+        return {isValid: false, errorMessage: "Tillåtet lånebelopp är mellan 10000 och 1000000 SEK."};
     }
 
-    if (interestRate < (2/100/12) || interestRate > (10/100/12)) {
-        return { isValid: false, errorMessage: "Tillåten räntesats är mellan 2 och 10%." };
+    if (interestRate < (2) || interestRate > (10)) {
+        return {isValid: false, errorMessage: "Tillåten räntesats är mellan 2 och 10%."};
     }
 
-    if (repaymentPeriod < (1*12) || repaymentPeriod > (20*12)) {
-        return { isValid: false, errorMessage: "Tillåten återbetalningstid är mellan 1 och 20 år." };
+    if (repaymentPeriod < (1) || repaymentPeriod > (20)) {
+        return {isValid: false, errorMessage: "Tillåten återbetalningstid är mellan 1 och 20 år."};
     }
 
     // Om alla kontroller är godkända, returna true och inget felmeddelande
-    return { isValid: true, errorMessage: "" };
+    return {isValid: true, errorMessage: ""};
 }
 
 // Event listener för när formuläret skickas in
@@ -42,12 +42,10 @@ loanForm.addEventListener('submit', function (event: Event) {
 
     // Hämta användarens inmatade värden
     loanAmount = parseFloat((document.getElementById('loanAmount') as HTMLInputElement).value);
-    // Omvandla ränta till månadsränta
-    interestRate = parseFloat((document.getElementById('interestRate') as HTMLInputElement).value) / 100 / 12;
-    // Omvandla återbetalningstid till månader
-    repaymentPeriod = parseFloat((document.getElementById('repaymentPeriod') as HTMLInputElement).value) * 12;
+    interestRate = parseFloat((document.getElementById('interestRate') as HTMLInputElement).value);
+    repaymentPeriod = parseFloat((document.getElementById('repaymentPeriod') as HTMLInputElement).value);
 
-    // Valider användarens inmatningar
+    // Validera användarens inmatningar
     const validation: {isValid: boolean; errorMessage: string} = isValidInput();
     if (!validation.isValid) {
         if (validation.errorMessage) {
@@ -60,21 +58,21 @@ loanForm.addEventListener('submit', function (event: Event) {
 
     // Utför beräkningar med de validerade värdena
     const monthlyPayment: number = calculateMonthlyPayment(loanAmount, interestRate, repaymentPeriod);
-    const totalInterest: number = calculateTotalInterest(monthlyPayment, repaymentPeriod, loanAmount);
-    const amortizationSchedule: number[] = generateAmortizationSchedule(loanAmount, interestRate, repaymentPeriod, monthlyPayment);
+    const totalInterest: number = calculateTotalInterest(monthlyPayment, repaymentPeriod * 12, loanAmount);
+    const amortizationSchedule: number[] = generateAmortizationSchedule(loanAmount, interestRate / 100 / 12, repaymentPeriod * 12, monthlyPayment);
 
     // Visa resultaten under beräkna-knappen på webbsidan
     displayResults(monthlyPayment, totalInterest, amortizationSchedule);
 });
 
 // Funktion för att beräkna den månatliga betalningen med den givna formeln: M = p * (r * (1+r)^n)) / ((1 + r)^n-1))
-function calculateMonthlyPayment(loanAmount: number, interestRate: number, repaymentPeriod: number): number {
+function calculateMonthlyPayment(loanAmount: number, annualInterestRate: number, repaymentPeriod: number): number {
     // Konvertera den årliga räntesatsen till en månatlig räntesats
-    const monthlyInterestRate: number = interestRate / 12;
-    const numberOfPayments: number = repaymentPeriod;
+    const monthlyInterestRate: number = annualInterestRate / 100 / 12;
+    const numberOfPayments: number = repaymentPeriod * 12;
 
     // Beräkna månatlig betalning enligt formeln. Math.pow för att beräkna basen upphöjt till exponenten. Numerator (täljare) och denominator (nämnare).
-    const numerator: number = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments));
+    const numerator: number = loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments);
     const denominator: number = Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1;
 
     const monthlyPayment: number = numerator / denominator;
