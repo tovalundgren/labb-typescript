@@ -17,11 +17,11 @@ function isValidInput(): {isValid: boolean; errorMessage: string} {
         return {isValid: false, errorMessage: "Tillåtet lånebelopp är mellan 10000 och 1000000 SEK."};
     }
 
-    if (interestRate < (2) || interestRate > (10)) {
+    if (interestRate < 2 || interestRate > 10) {
         return {isValid: false, errorMessage: "Tillåten räntesats är mellan 2 och 10%."};
     }
 
-    if (repaymentPeriod < (1) || repaymentPeriod > (20)) {
+    if (repaymentPeriod < 1 || repaymentPeriod > 20) {
         return {isValid: false, errorMessage: "Tillåten återbetalningstid är mellan 1 och 20 år."};
     }
 
