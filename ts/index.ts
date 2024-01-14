@@ -1,9 +1,3 @@
-/* 
-1. Försök korta ner all kod ytterligare
-2. Se över varför återstående saldo är så långt ifrån 0...
-3. Lämna in på GitHub
-*/
-
 // Definiera parametrarna för lånet och amorteringsplanen
 let loanAmount: number;
 let interestRate: number;
